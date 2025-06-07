@@ -1,0 +1,324 @@
+<html>
+<head>
+  <title>Your Score</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #1e3c72, #2a5298);
+      margin: 0;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    .score-box {
+      background: #fff;
+      color: #333;
+      padding: 40px;
+      border-radius: 16px;
+      text-align: center;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      max-width: 500px;
+      margin: 50px auto 20px auto;
+    }
+
+    .circle-wrapper {
+      position: relative;
+      width: 180px;
+      height: 180px;
+      margin: 0 auto 20px auto;
+    }
+
+    .circle-bg {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background: conic-gradient(#4caf50 var(--degree), #e0e0e0 var(--degree));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .percentage {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 32px;
+      font-weight: bold;
+    }
+
+    .score-box input,
+    .score-box button {
+      padding: 10px 20px;
+      margin-top: 15px;
+      border-radius: 8px;
+      border: none;
+      font-size: 16px;
+    }
+
+    .score-box input {
+      width: 80%;
+      display: none;
+      border: 1px solid #ccc;
+    }
+
+    #downloadBtn,
+    #retakeBtn {
+      display: none;
+      background-color: #4caf50;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    #retakeBtn {
+      background-color: #e53935;
+    }
+
+    #retakeBtn:hover {
+      background-color: #c62828;
+    }
+
+    #downloadBtn:hover {
+      background-color: #388e3c;
+    }
+
+    .pass {
+      color: #2e7d32;
+      font-weight: bold;
+    }
+
+    .fail {
+      color: #e53935;
+      font-weight: bold;
+    }
+
+  #certificate {
+    width: 297mm;
+    height: 210mm;
+    padding: 60px;
+    box-sizing: border-box;
+    background-color: #fdfdfd;
+    color: #333;
+    font-family: 'Georgia', serif;
+    border: 12px double #4caf50;
+    border-radius: 12px;
+    text-align: center;
+    position: relative;
+    display: none;
+  }
+
+  #certificate h1.title {
+    color: #2e7d32;
+    font-size: 40px;
+    margin-bottom: 10px;
+  }
+
+  #certificate h2.system-name {
+    color: #4caf50;
+    font-size: 22px;
+    margin-bottom: 30px;
+    font-weight: normal;
+    font-style: italic;
+  }
+
+  #certificate .recipient {
+    font-size: 24px;
+    margin: 20px 0;
+  }
+
+  #certificate .score-text {
+    font-size: 18px;
+    margin-top: 10px;
+    font-weight: 500;
+  }
+
+  #certificate .footer {
+    position: absolute;
+    bottom: 40px;
+    width: 100%;
+    text-align: center;
+    font-size: 16px;
+  }
+
+  .seal {
+    position: absolute;
+    bottom: 60px;
+    right: 60px;
+    width: 80px;
+    height: 80px;
+    background: radial-gradient(circle at center, #4caf50 60%, #388e3c 100%);
+    border-radius: 50%;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 14px;
+    border: 4px solid #2e7d32;
+    transform: rotate(-15deg);
+  }
+
+  footer {
+      background: #1e3c72;
+      color: #fff;
+      padding: 30px 20px;
+      margin-top: auto;
+    }
+
+    .feedback-form {
+      max-width: 600px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .feedback-form h2 {
+      margin-bottom: 15px;
+      font-size: 24px;
+    }
+
+    .feedback-form textarea {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      resize: vertical;
+      min-height: 100px;
+      margin-bottom: 15px;
+      font-size: 16px;
+    }
+
+    .feedback-form button {
+      background: #4caf50;
+      color: #fff;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: bold;
+      transition: background 0.3s ease;
+    }
+
+    .feedback-form button:hover {
+      background: #388e3c;
+    }
+  </style>
+</head>
+<body>
+
+<div class="score-box">
+  <h1>Test Result</h1>
+  <div id="circleContainer"></div>
+  <p id="scoreDisplay"></p>
+  <p id="statusText"></p>
+  <input type="text" id="userNameInput" placeholder="Enter your name for certificate">
+  <button id="downloadBtn" onclick="downloadCertificate()">Download Certificate</button>
+  <button id="retakeBtn" onclick="retakeTest()">Retake Test</button>
+</div>
+
+<div id="certificate">
+  <h1 class="title">Certificate of Achievement</h1>
+  <h2 class="system-name">Test Assessment System</h2>
+  <p>This is proudly awarded to</p>
+  <h2 id="certName" class="recipient">[Your Name]</h2>
+  <p>for successfully passing the assessment with outstanding performance.</p>
+  <p class="score-text">Score Achieved: <strong id="certPercent">[Score]%</strong></p>
+  <div class="footer">
+    <p>Date Issued: <span id="certDate"></span></p>
+    <p>Authorized by: Test Assessment System Team</p>
+  </div>
+  <div class="seal">Official</div>
+</div>
+
+<footer>
+  <div class="feedback-form">
+    <h2>We value your feedback!</h2>
+    <form action="subfeed.php" method="POST">
+      <textarea name="feedback" placeholder="Write your feedback here..." required></textarea><br>
+      <button type="submit">Submit Feedback</button>
+    </form>
+  </div>
+</footer>
+
+<script>
+  const score = parseInt(sessionStorage.getItem("userScore"));
+  const total = parseInt(sessionStorage.getItem("totalQuestions"));
+  const percentage = (score / total) * 100;
+
+  const statusText = document.getElementById("statusText");
+  const circleContainer = document.getElementById("circleContainer");
+
+  if (!isNaN(score) && !isNaN(total)) {
+    const degree = (percentage / 100) * 360;
+
+    const wrapper = document.createElement("div");
+    wrapper.className = "circle-wrapper";
+
+    const circle = document.createElement("div");
+    circle.className = "circle-bg";
+    circle.style.setProperty("--degree", `${degree}deg`);
+
+    const percentText = document.createElement("div");
+    percentText.className = "percentage";
+    percentText.innerText = `${Math.round(percentage)}%`;
+
+    circle.appendChild(percentText);
+    wrapper.appendChild(circle);
+    circleContainer.appendChild(wrapper);
+
+    document.getElementById("scoreDisplay").innerText = `You scored ${score} out of ${total}`;
+
+    if (percentage >= 80) {
+      statusText.innerText = "Congratulations! You Passed!";
+      statusText.classList.add("pass");
+      document.getElementById("userNameInput").style.display = "block";
+      document.getElementById("downloadBtn").style.display = "inline-block";
+    } else {
+      statusText.innerText = "You did not pass. Please retake the test.";
+      statusText.classList.add("fail");
+      document.getElementById("retakeBtn").style.display = "inline-block";
+    }
+  }
+
+  function downloadCertificate() {
+    const name = document.getElementById("userNameInput").value.trim();
+    if (!name) {
+      alert("Please enter your name.");
+      return;
+    }
+
+    document.getElementById("certName").innerText = name;
+    document.getElementById("certPercent").innerText = `${Math.round(percentage)}%`;
+    document.getElementById("certDate").innerText = new Date().toLocaleDateString();
+
+    const cert = document.getElementById("certificate");
+    cert.style.display = "block";
+
+    const opt = {
+      margin: 0,
+      filename: `Certificate_${name}.pdf`,
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2 },
+      jsPDF: {
+        unit: 'mm',
+        format: 'a4',
+        orientation: 'landscape'
+      }
+    };
+
+    html2pdf().set(opt).from(cert).save().then(() => {
+      cert.style.display = "none";
+    });
+  }
+
+  function retakeTest() {
+    window.location.href = "tests.html"; 
+  }
+</script>
+</body>
+</html>
